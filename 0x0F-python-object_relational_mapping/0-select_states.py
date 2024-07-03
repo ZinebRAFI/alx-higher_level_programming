@@ -1,26 +1,36 @@
 #!/usr/bin/python3
-"""states models
 """
+Lists all states from the database hbtn_0e_0_usa sorted in ascending order by
+states.id
+"""
+import MySQLdb
+import sys
+
+
 if __name__ == "__main__":
-    import MySQLdb
-    import sys
+    mysql_username = sys.argv[1]
+    mysql_password = sys.argv[2]
+    db_name = sys.argv[3]
 
-    db_host = "localhost"
-    db_user = sys.argv[1]  # "your_username"
-    db_password = sys.argv[2]  # "your_password"
-    db_name = sys.argv[3]  # "your_database_name"
-    port = 3306
+    try:
+        conn = MySQLdb.connect(
+            host="localhost",
+            port=3306,
+            user=mysql_username,
+            passwd=mysql_password,
+            db=db_name,
+            charset="utf8"
+        )
+    except MySQLdb.Error as e:
+        print("Error connecting to database: {}".format(e))
+        sys.exit(1)
 
-    db = MySQLdb.connect(
-        host=db_host, user=db_user, passwd=db_password, db=db_name, port=port
-    )
-    cursor = db.cursor()
-
-    cursor.execute("SELECT * FROM states ORDER BY id ASC")
-    rows = cursor.fetchall()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM states ORDER BY id ASC")
+    rows = cur.fetchall()
 
     for row in rows:
         print(row)
 
-    cursor.close()
-    db.close()
+    cur.close()
+    conn.close()
